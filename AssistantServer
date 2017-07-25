@@ -1,0 +1,56 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.time.LocalDateTime;
+
+public class AssistantServer {
+	public static void main(String[] args) throws Exception{
+		ServerSocket server = new ServerSocket(30000);
+		System.out.println("on...");
+		System.out.println("waiting...");
+		Socket sock = server.accept();
+		System.out.println(sock.getInetAddress()+" oo...");
+		
+		InputStream is =sock.getInputStream();
+		DataInputStream dis = new DataInputStream(is);
+		
+		OutputStream os = sock.getOutputStream();
+		DataOutputStream dos = new DataOutputStream(os);
+		
+		while(true) {
+			String command = dis.readUTF();
+			if(command.equals("시간")) {
+				
+				LocalDateTime ldt = LocalDateTime.now();
+				
+				dos.writeUTF(ldt+"");
+				dos.flush();
+			}
+			else if(command.equals("명언")) {
+				String[] sentences = new String[] {
+						"Education is a method whereby one acquires a higher grade of prejudices",
+						"It is a bad plan that admits of no modification",
+						"Nothing is as far away as one minute ago"
+						
+				};
+				String msg = sentences[(int)Math.random()*3];
+				dos.writeUTF(msg);
+				dos.flush();
+				
+			}
+			else if(command.equals("로또")) {
+				dos.writeUTF("11,22,33,44,55,66");
+			}
+			else {
+				dos.writeUTF("error. 시간, 명언, 로또");
+				dos.flush();
+			}
+		}
+		
+		
+		
+	}
+}
